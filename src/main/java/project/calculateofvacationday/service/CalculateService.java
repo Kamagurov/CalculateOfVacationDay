@@ -1,6 +1,6 @@
 package project.calculateofvacationday.service;
 
-import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import project.calculateofvacationday.model.PublicHoliday;
 import project.calculateofvacationday.model.VacationModel;
@@ -8,26 +8,27 @@ import project.calculateofvacationday.model.VacationModel;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
 @Service
-@Data
 public class CalculateService {
 
-    private final List<PublicHoliday> publicHolidays;
+    @Autowired
+    private List<PublicHoliday> publicHolidays = new ArrayList<>();
 
-    public double getCalcOfVacationDay(VacationModel vacationModel) {
-        LocalDate startDate = vacationModel.getLocalDate().minusYears(1);
+    public Double getCalcOfVacationDay(VacationModel vacationModel) {
+        LocalDate startDate = vacationModel.getStartDate().minusYears(1);
         int period = vacationModel.getVacationDays();
 
-        long businessDays = getBusinessDaysWithHolidays(startDate, vacationModel.getLocalDate());
+        long businessDays = getBusinessDaysWithHolidays(startDate, vacationModel.getStartDate());
         double avgSalaryPerDay = (vacationModel.getAvgSalaryFpr12Months() * period) / businessDays;
 
         return avgSalaryPerDay * vacationModel.getVacationDays();
     }
 
-    private long getBusinessDaysWithHolidays(LocalDate startDate, LocalDate endDate) {
+    private Long getBusinessDaysWithHolidays(LocalDate startDate, LocalDate endDate) {
         return Stream.iterate(startDate, date -> date.plusDays(1))
                 .limit(ChronoUnit.DAYS.between(startDate, endDate) + 1)
                 .filter(this::isBusinessDay)
