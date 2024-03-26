@@ -1,6 +1,6 @@
 package project.calculateofvacationday.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import project.calculateofvacationday.model.PublicHoliday;
 import project.calculateofvacationday.model.VacationModel;
@@ -13,17 +13,16 @@ import java.util.List;
 import java.util.stream.Stream;
 
 @Service
+@RequiredArgsConstructor
 public class CalculateService {
 
-    @Autowired
-    private List<PublicHoliday> publicHolidays = new ArrayList<>();
+    private final List<PublicHoliday> publicHolidays = new ArrayList<>();
 
     public Double getCalcOfVacationDay(VacationModel vacationModel) {
         LocalDate startDate = vacationModel.getStartDate().minusYears(1);
-        int period = vacationModel.getVacationDays();
 
         long businessDays = getBusinessDaysWithHolidays(startDate, vacationModel.getStartDate());
-        double avgSalaryPerDay = (vacationModel.getAvgSalaryFpr12Months() * period) / businessDays;
+        double avgSalaryPerDay = (vacationModel.getAvgSalaryFpr12Months() * 12) / businessDays;
 
         return avgSalaryPerDay * vacationModel.getVacationDays();
     }

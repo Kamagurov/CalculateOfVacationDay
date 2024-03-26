@@ -36,6 +36,6 @@ class CalculateServiceTest {
 
         double result = calculateService.getCalcOfVacationDay(vacationModel);
 
-        assertEquals(expectedResult, result, 0.0);
+        assertEquals(expectedResult, result);
     }
 }
